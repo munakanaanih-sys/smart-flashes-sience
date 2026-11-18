@@ -253,6 +253,13 @@
 
         .tag-grade  { background: var(--yellow-light); color: #92400e; border: 1.5px solid var(--yellow); }
         .tag-subject{ background: var(--blue-light);   color: #0369a1; border: 1.5px solid #93c5fd; }
+        .tag-type   { background: var(--pink-light);   color: #9d174d; border: 1.5px solid var(--pink-mid); }
+        .tag-type.ws  { background: #ffedd5; color: #9a3412; border-color: #fdba74; }
+        .tag-type.sum { background: var(--green-light); color: #065f46; border-color: var(--green-mid); }
+        .tag-type.vid { background: #ede9fe; color: #5b21b6; border-color: #c4b5fd; }
+        .unit-head { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin: 14px 4px -4px; padding-bottom: 8px; border-bottom: 2px dashed var(--pink-mid); }
+        .unit-head h2 { font-family: 'Cairo', sans-serif; font-size: 1.35rem; color: var(--text); }
+        .unit-head span { color: var(--text-muted); font-weight: 500; }
 
         .btn {
             margin-top: auto;
@@ -461,6 +468,16 @@
                 <option data-i18n="bio" value="ביולוגיה">بيولوجيا</option>
             </select>
         </div>
+        <div class="filter-group">
+            <span class="filter-icon">📄</span>
+            <select id="typeFilter" onchange="renderCards()">
+                <option data-i18n="allTypes" value="الكل">كل الأنواع</option>
+                <option data-i18n="tAct" value="فعالية">فعاليات محوسبة</option>
+                <option data-i18n="tWs" value="ورقة عمل">أوراق عمل</option>
+                <option data-i18n="tSum" value="ملخص">ملخصات</option>
+                <option data-i18n="tVid" value="فيديو">فيديوهات</option>
+            </select>
+        </div>
     </div>
     <div class="stats-bar" id="stats-bar"></div>
     <div class="grid" id="activities-container"></div>
@@ -516,10 +533,14 @@
             welcome: 'أعزائي الطلاب.. انطلقوا معي في رحلة تتخطى حدود الكتب، حيث يتحول العلم إلى متعة، والاكتشاف إلى مغامرة لا تُنسى. المستقبل يبدأ بسؤال، فكونوا شغوفين ومبدعين! 🌟',
             teacher: '✦ بإشراف المعلمة منى مصطفى ✦',
             otherLang: 'עברית',
-            search: 'ابحث عن فعالية…',
+            search: 'ابحث عن موضوع أو ورقة عمل…',
             allGrades: 'جميع الصفوف', g7: 'الصف السابع', g8: 'الصف الثامن', g9: 'الصف التاسع',
             allSubjects: 'جميع المواد', phys: 'فيزياء', chem: 'كيمياء', bio: 'بيولوجيا',
-            showing: (n, all, filtered) => `يعرض ${n === 1 ? '<strong>فعالية واحدة</strong>' : n === 2 ? '<strong>فعاليتين</strong>' : `<strong>${n}</strong> ${n <= 10 ? 'فعاليات' : 'فعالية'}`}${filtered ? ` من أصل <strong>${all}</strong>` : ''} &nbsp;•&nbsp; جاهزة للانطلاق 🚀`,
+            allTypes: 'كل الأنواع', tAct: 'فعاليات محوسبة', tWs: 'أوراق عمل', tSum: 'ملخصات', tVid: 'فيديوهات',
+            type: { 'فعالية': 'فعالية محوسبة', 'ورقة عمل': 'ورقة عمل', 'ملخص': 'ملخص', 'فيديو': 'فيديو' },
+            open: { 'ورقة عمل': 'افتح ورقة العمل', 'ملخص': 'افتح الملخص', 'فيديو': 'شاهد الفيديو' },
+            extra: 'مواضيع إضافية من العلوم', unitWord: 'وحدة',
+            showing: (n, all, filtered) => `يعرض ${n === 1 ? '<strong>مادة واحدة</strong>' : n === 2 ? '<strong>مادتين</strong>' : `<strong>${n}</strong> ${n <= 10 ? 'مواد' : 'مادة'}`}${filtered ? ` من أصل <strong>${all}</strong>` : ''} &nbsp;•&nbsp; جاهزة للانطلاق 🚀`,
             none: 'لا توجد فعاليات مطابقة لبحثك أو لاختيارك.',
             start: 'ابدأ الفعالية',
             footer: 'ومضات ذكية مع منى مصطفى &nbsp;|&nbsp; موقع العلوم والتكنولوجيا',
@@ -555,10 +576,14 @@
             welcome: 'תלמידים יקרים, צאו איתי למסע שחוצה את גבולות הספרים, שבו המדע הופך להנאה והגילוי להרפתקה בלתי נשכחת. העתיד מתחיל בשאלה, אז היו סקרנים ויצירתיים! 🌟',
             teacher: '✦ בהנחיית המורה מונא מוסטפא ✦',
             otherLang: 'العربية',
-            search: 'חיפוש פעילות…',
+            search: 'חיפוש נושא או דף עבודה…',
             allGrades: 'כל השכבות', g7: 'שכבה ז׳', g8: 'שכבה ח׳', g9: 'שכבה ט׳',
             allSubjects: 'כל המקצועות', phys: 'פיזיקה', chem: 'כימיה', bio: 'ביולוגיה',
-            showing: (n, all, filtered) => `${n === 1 ? 'מוצגת <strong>פעילות אחת</strong>' : `מוצגות <strong>${n}</strong> פעילויות`}${filtered ? ` מתוך <strong>${all}</strong>` : ''} &nbsp;•&nbsp; מוכנים לצאת לדרך 🚀`,
+            allTypes: 'כל הסוגים', tAct: 'פעילויות ממוחשבות', tWs: 'דפי עבודה', tSum: 'סיכומים', tVid: 'סרטונים',
+            type: { 'فعالية': 'פעילות ממוחשבת', 'ورقة عمل': 'דף עבודה', 'ملخص': 'סיכום', 'فيديو': 'סרטון' },
+            open: { 'ورقة عمل': 'פתיחת דף העבודה', 'ملخص': 'פתיחת הסיכום', 'فيديو': 'צפייה בסרטון' },
+            extra: 'נושאים נוספים במדעים', unitWord: 'יחידה',
+            showing: (n, all, filtered) => `${n === 1 ? 'מוצג <strong>פריט אחד</strong>' : `מוצגים <strong>${n}</strong> פריטים`}${filtered ? ` מתוך <strong>${all}</strong>` : ''} &nbsp;•&nbsp; מוכנים לצאת לדרך 🚀`,
             none: 'לא נמצאו פעילויות שמתאימות לחיפוש או לבחירה שלך.',
             start: 'התחלת הפעילות',
             footer: 'ניצוצות חכמים עם מונא מוסטפא &nbsp;|&nbsp; אתר המדע והטכנולוגיה',
@@ -666,14 +691,40 @@
         return he;
     }
 
+    const UNITS = {
+        'ז': ['اللغة الفيزيائية','الكتلة','الحجم','الكثافة','الحركة','القوى','قوانين نيوتن','أنواع القوى','الاحتكاك'],
+        'ח': ['الضغط في المواد الصلبة','الضغط في الموائع','قوة الطفو','الطاقة الميكانيكية','الطاقة الداخلية'],
+        'ט': ['أدوات رياضية','مجال الجاذبية','الكهرباء الساكنة','المجال الكهربائي','التيار الكهربائي','الطاقة الكهربائية','المغناطيسية']
+    };
+    const UNIT_HE = {
+        'اللغة الفيزيائية':'השפה הפיזיקלית','الكتلة':'מסה','الحجم':'נפח','الكثافة':'צפיפות','الحركة':'תנועה','القوى':'כוחות',
+        'قوانين نيوتن':'חוקי ניוטון','أنواع القوى':'סוגי כוחות','الاحتكاك':'חיכוך','الضغط في المواد الصلبة':'לחץ במוצקים',
+        'الضغط في الموائع':'לחץ בזורמים','قوة الطفو':'כוח העילוי','الطاقة الميكانيكية':'אנרגיה מכנית','الطاقة الداخلية':'אנרגיה פנימית',
+        'أدوات رياضية':'כלים מתמטיים','مجال الجاذبية':'שדה הכבידה','الكهرباء الساكنة':'אלקטרוסטטיקה','المجال الكهربائي':'השדה החשמלי',
+        'التيار الكهربائي':'הזרם החשמלי','الطاقة الكهربائية':'אנרגיה חשמלית','المغناطيسية':'מגנטיות'
+    };
+    const EXTRA_UNIT = 'مواضيع إضافية';
+    const TYPE_CLS = { 'ورقة عمل': 'ws', 'ملخص': 'sum', 'فيديو': 'vid' };
+    function gradeOrder(g) { return g.includes('ז') ? 0 : g.includes('ח') ? 1 : g.includes('ט') ? 2 : 3; }
+    function unitOrder(a) {
+        const g = a.grade.includes('ז') ? 'ז' : a.grade.includes('ח') ? 'ח' : 'ט';
+        const i = (UNITS[g] || []).indexOf(a.unit);
+        return a.unit && a.unit !== EXTRA_UNIT ? (i < 0 ? 50 : i) : 99;
+    }
+    function unitLabel(a) {
+        if (!a.unit || a.unit === EXTRA_UNIT) return t('extra');
+        return LANG === 'he' ? (UNIT_HE[a.unit] || a.unit) : a.unit;
+    }
+
     function renderCards() {
         const container = document.getElementById('activities-container');
         const statsBar  = document.getElementById('stats-bar');
         const gf = document.getElementById('gradeFilter').value;
         const sf = document.getElementById('subjectFilter').value;
+        const tf = document.getElementById('typeFilter').value;
         const words = norm(document.getElementById('searchBox').value).split(' ').filter(Boolean);
         const filtered = allActivities.filter(a => {
-            if (!((gf === 'الكل' || a.grade.includes(gf)) && (sf === 'الكل' || a.subject === sf))) return false;
+            if (!((gf === 'الكل' || a.grade.includes(gf)) && (sf === 'الكل' || a.subject === sf) && (tf === 'الكل' || (a.type || 'فعالية') === tf))) return false;
             if (!words.length) return true;
             const names = ['ar', 'he'].map(l => {
                 const d = I18N[l];
@@ -681,7 +732,7 @@
                 const gr  = a.grade.includes('ז') ? d.g7 : a.grade.includes('ח') ? d.g8 : d.g9;
                 return sub + ' ' + gr;
             });
-            let hay = norm([a.titleAr, a.titleHe, a.subject, ...names].join(' '));
+            let hay = norm([a.titleAr, a.titleHe, a.subject, a.unit || '', UNIT_HE[a.unit] || '', ...names].join(' '));
             hay += ' ' + hay.replace(/قوانين/g, 'قانون').replace(/חוקי/g, 'חוק');
             const ALIAS = { 'قوانين': 'قانون', 'قانون': 'قانون', 'חוקי': 'חוק', 'دائره': 'دوائر', 'دوائر': 'دوائر' };
             return words.every(w0 => {
@@ -692,7 +743,7 @@
                 return false;
             });
         });
-        const isFiltered = gf !== 'الكل' || sf !== 'الكل' || words.length > 0;
+        const isFiltered = gf !== 'الكل' || sf !== 'الكل' || tf !== 'الكل' || words.length > 0;
         statsBar.innerHTML = filtered.length ? t('showing')(filtered.length, allActivities.length, isFiltered) : '';
 
         container.innerHTML = '';
@@ -700,13 +751,30 @@
             container.innerHTML = '<div class="status-msg"><span class="emoji">🌱</span>' + t('none') + '</div>';
             return;
         }
+        const hasUnits = filtered.some(a => a.unit);
+        if (hasUnits) {
+            const typeRank = a => ['فعالية', 'ورقة عمل', 'ملخص', 'فيديو'].indexOf(a.type || 'فعالية');
+            filtered.forEach((a, i) => a._i = i);
+            filtered.sort((x, y) => gradeOrder(x.grade) - gradeOrder(y.grade) || unitOrder(x) - unitOrder(y) || typeRank(x) - typeRank(y) || x._i - y._i);
+        }
+        let lastHead = '';
         filtered.forEach((act, idx) => {
+            if (hasUnits) {
+                const key = act.grade + '|' + unitLabel(act);
+                if (key !== lastHead) {
+                    lastHead = key;
+                    const h = document.createElement('div');
+                    h.className = 'unit-head';
+                    h.innerHTML = `<h2>${unitLabel(act)}</h2><span>${translateGrade(act.grade)}</span>`;
+                    container.appendChild(h);
+                }
+            }
             const card = document.createElement('div');
             card.className = 'card';
             card.style.animationDelay = `${idx * 60}ms`;
             const btn = act.id
                 ? `<a href="#${act.id}" class="btn" onclick="openedInSession = true">${t('start')} ⚡</a>`
-                : `<a href="${act.url}" target="_blank" rel="noopener" class="btn">${t('start')} ↗</a>`;
+                : `<a href="${act.url}" target="_blank" rel="noopener" class="btn">${(t('open')[act.type] || t('start'))} ↗</a>`;
             card.innerHTML = `
                 <div class="card-icon">${act.icon}</div>
                 <div class="card-title-he">${LANG === 'he' ? act.titleHe : act.titleAr}</div>
@@ -714,6 +782,7 @@
                 <div class="card-tags">
                     <span class="tag tag-grade">🎓 ${LANG === 'he' ? '' : act.grade + ' • '}${translateGrade(act.grade)}</span>
                     <span class="tag tag-subject">📚 ${translateSubject(act.subject)}</span>
+                    ${act.type && act.type !== 'فعالية' ? `<span class="tag tag-type ${TYPE_CLS[act.type] || ''}">${t('type')[act.type] || act.type}</span>` : ''}
                 </div>
                 ${btn}`;
             container.appendChild(card);
@@ -949,10 +1018,10 @@
             if (!url || !(titleAr || titleHe)) return;
             if (/^(لا|no|לא)$/i.test(show)) return;
             if (/الرابط|קישור/.test(url)) return;              // سطر العناوين
-            const a = { grade: gradeKey(grade), subject: subjectKey(subject), titleAr: titleAr || titleHe, titleHe: titleHe || titleAr };
+            const a = { grade: gradeKey(grade), subject: subjectKey(subject), titleAr: titleAr || titleHe, titleHe: titleHe || titleAr, unit: val(r, 7), type: val(r, 8) || 'فعالية' };
             const id = embeddedIdFor(url);
             if (id) a.id = id; else a.url = url;
-            a.icon = getIcon(a.subject, a.titleHe);
+            a.icon = a.type === 'ورقة عمل' ? '📝' : a.type === 'ملخص' ? '📘' : a.type === 'فيديو' ? '🎬' : getIcon(a.subject, a.titleHe);
             list.push(a);
         });
         return list;
